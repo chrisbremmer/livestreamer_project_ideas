@@ -20,6 +20,7 @@ class IdeaService {
       tech: data.tech,
       viewer: data.viewer
     };
+
     idea.time = moment().format("h:mm:ss a");
 
     this.ideas.push(idea);
@@ -33,15 +34,16 @@ const app = express(feathers());
 // Parse JSON
 app.use(express.json());
 // Config Socket.io realtime APIs
-app.configure(socketio);
+app.configure(socketio());
 // Enable REST services
 app.configure(express.rest());
 // Register services
 app.use("/ideas", new IdeaService());
+
 // New connections connect to stream channel
 app.on("connection", conn => app.channel("stream").join(conn));
 // Publish events to stream
-// app.publish(data => app.channel("stream"));
+app.publish(data => app.channel("stream"));
 
 const PORT = process.env.PORT || 3030;
 
@@ -54,6 +56,5 @@ app
 // app.service("ideas").create({
 //   text: "Build a cool app",
 //   tech: "Node.js",
-//   viewer: "John Doe",
-//   time: moment().format("h:mm:ss a")
+//   viewer: "John Doe"
 // });
